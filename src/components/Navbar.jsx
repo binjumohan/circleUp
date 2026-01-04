@@ -7,7 +7,7 @@ const Navbar = () => {
    text-white shadow-lg'
    >
     <div className='flex items-center gap-3'>
-        <img src="./src/images/logo.png" alt="CircleUp logo" 
+        <img src="public/images/logo.png" alt="CircleUp logo" 
         className='w-10 h-10 rounded-lg shadow-md' />
         <h1 className='text-3xl font-bold'>CircleUp</h1>
     </div>
