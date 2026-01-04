@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+.footer{
+  position: fixed;
+  bottom: 0;
+}
