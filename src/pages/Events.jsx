@@ -4,10 +4,40 @@ import Event from "./Event";
 
 const Events = () => {
   const [search, setSearch] = useState("");
+  const [searchBy, setSearchBy] = useState("");
+  const [location, setLocation] = useState("");
+  const [price, setPrice] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
-  const filteredEvents = eventdata.filter((e) =>
-    e.eventName.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredEvents = eventdata.filter((e) => {
+    const matchesSearch = e.eventName
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesLocation =
+      !location ||
+      e.venue.toLowerCase().includes(location.toLowerCase());
+
+    const matchesPrice =
+      !price ||
+      (price === "Free" && e.price === 0) ||
+      (price === "Paid" && e.price > 0);
+
+    const eventDate = new Date(e.date);
+    const matchesStartDate =
+      !startDate || eventDate >= new Date(startDate);
+    const matchesEndDate =
+      !endDate || eventDate <= new Date(endDate);
+
+    return (
+      matchesSearch &&
+      matchesLocation &&
+      matchesPrice &&
+      matchesStartDate &&
+      matchesEndDate
+    );
+  });
 
   return (
     <div className="min-h-screen bg-black text-yellow-50 px-6 py-10">
@@ -17,24 +47,91 @@ const Events = () => {
         Upcoming Events
       </h1>
 
-      {/* Search */}
-      <div className="flex justify-center mb-10">
-        <input
+  
+    
+
+      {/* Search By */}
+      <div className="max-w-3xl mx-auto bg-gray-900 border border-yellow-600
+        rounded-xl p-5 mb-10 space-y-4">
+
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <label className="text-yellow-400 font-semibold w-sm">
+            Filter by
+          </label>
+
+          <select
+            className="bg-black border border-yellow-500 rounded-lg px-4 py-2 w-full"
+            onChange={(e) => {
+              setSearchBy(e.target.value);
+              setLocation("");
+              setPrice("");
+              setStartDate("");
+              setEndDate("");
+            }}
+          >
+            <option value="">Select</option>
+            <option value="price">Price</option>
+            <option value="date">Date Range</option>
+            <option value="location">Location</option>
+          </select>
+        </div>
+
+        {/* Conditional Inputs */}
+        {searchBy === "price" && (
+          <select
+            className="w-full bg-black border border-yellow-500 rounded-lg px-4 py-2"
+            onChange={(e) => setPrice(e.target.value)}
+          >
+            <option value="">All Prices</option>
+            <option value="Free">Free</option>
+            <option value="Paid">Paid</option>
+          </select>
+        )}
+
+        {searchBy === "location" && (
+          <input
+            type="text"
+            placeholder="Enter location"
+            className="w-full bg-black border border-yellow-500 rounded-lg px-4 py-2"
+            onChange={(e) => setLocation(e.target.value)}
+          />
+        )}
+
+        {searchBy === "date" && (
+          
+            <div className="flex items-center gap-3 flex-wrap">
+          <label>From</label> 
+           <input
+              type="date"
+              className="bg-white border border-yellow-500 rounded-lg px-2 py-2 text-black"
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+              <label>To</label> 
+            <input
+              type="date"
+              className="bg-white border border-yellow-500 rounded-lg px-4 py-2 text-black"
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+        )}
+      </div>
+          <div className="flex justify-end mb-6">
+        <input name="searchbutton"
           type="text"
           placeholder="Search events..."
           className="w-full max-w-md px-4 py-3 rounded-xl
-            bg-gray-900 border border-yellow-500
-            text-yellow-100 placeholder-yellow-300
-            focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          bg-gray-900 border border-yellow-500
+          text-yellow-100 placeholder-yellow-300
+          focus:outline-none focus:ring-2 focus:ring-yellow-500"
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-
       {/* Events Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredEvents.map((e) => (
           <Event
             key={e.id}
+            id={e.id}
             eventName={e.eventName}
             description={e.description}
             venue={e.venue}
@@ -43,6 +140,8 @@ const Events = () => {
             timeFrom={e.timeFrom}
             timeTo={e.timeTo}
             eventCoordinator={e.eventCoordinator}
+            category={e.category}
+            price={e.price}
           />
         ))}
       </div>
