@@ -19,8 +19,7 @@ const Login = () => {
       password
     );
 
-    console.log("Logged In:", userCredential.user);
-
+    console.log("Logged In:", userCredential.user);  
     alert("Login Successful");
 
     // ✅ Redirect to Home page
